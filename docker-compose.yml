@@ -1,0 +1,12 @@
+version: '3.5'
+
+services:
+  python-org:
+    container_name: python-org
+    build: .
+    volumes:
+      - '.:/app'
+      - 'local:/root/.local'
+
+volumes:
+  local:
