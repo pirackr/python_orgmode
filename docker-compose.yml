@@ -7,6 +7,6 @@ services:
     volumes:
       - '.:/app'
       - 'local:/root/.local'
-
+      
 volumes:
   local:
