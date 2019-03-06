@@ -3,6 +3,7 @@ import unittest
 from robber import expect
 from python_org import parse, OrgNode, Text
 
+
 class HeadlineTest(unittest.TestCase):
     def test_valid_headline(self):
         root = parse('''* TODO Hello''')
@@ -43,17 +44,18 @@ Node2->body1''')
 
     def test_multiple_level_of_children(self):
         root = parse('''* TODO Level 1
+*** TODO First Level 3
 ** TODO Level 2
-*** TODO Level 3
+*** TODO Second Level 3
 ** TODO Another Level 2
 * TODO Another Level 1''')
         level1 = root.content[0]
-        level2 = level1.content[0]
+        level2 = level1.content[1]
         level3 = level2.content[0]
 
         expect(root.content).to.have.length(2)
-        expect(level1.content).to.have.length(2)
+        expect(level1.content).to.have.length(3)
         expect(level1.heading).to.be.eq("Level 1")
         expect(level2.content).to.have.length(1)
         expect(level2.heading).to.be.eq("Level 2")
-        expect(level3.heading).to.be.eq("Level 3")
+        expect(level3.heading).to.be.eq("Second Level 3")

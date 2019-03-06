@@ -31,25 +31,31 @@ def parse_line(st):
         return Text(st)
 
 
+def find_ancestor(ancestors, parsed):
+    while len(ancestors) > 0:
+        ancestor = ancestors[-1]
+
+        if ancestor.level < parsed.level:
+            ancestors.append(parsed)
+            return ancestors, ancestor
+        else:
+            ancestors.pop()
+
+    return ancestors, None
+
+
 def parse(st):
     current = root = OrgNode(None, None, 0, [])
-    stack = [root]
+    ancestors = [root]
 
     for line in st.split('\n'):
         parsed = parse_line(line)
 
         if isinstance(parsed, OrgNode):
-            while len(stack) > 0:
-                ancestor = stack[-1]
-
-                if ancestor.level < parsed.level:
-                    ancestor.content.append(parsed)
-                    stack.append(parsed)
-                    current = parsed
-                    break
-                else:
-                    stack.pop()
-
+            ancestors, ancestor = find_ancestor(ancestors, parsed)
+            ancestor.content.append(parsed)
+            current = parsed
         else:
             current.content.append(parsed)
+
     return root
