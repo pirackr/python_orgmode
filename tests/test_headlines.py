@@ -1,10 +1,11 @@
 import unittest
 
+from datetime import datetime
 from robber import expect
 from python_org import parse, OrgNode, Text
 
 
-class HeadlineTest(unittest.TestCase):
+class HeadlinesTest(unittest.TestCase):
     def test_valid_headline(self):
         root = parse('''* TODO Hello''')
         expect(root.content).to.have.length(1)
@@ -59,3 +60,18 @@ Node2->body1''')
         expect(level2.content).to.have.length(1)
         expect(level2.heading).to.be.eq("Level 2")
         expect(level3.heading).to.be.eq("Second Level 3")
+
+    def test_with_tags(self):
+        root = parse("* TODO Heading :tag1:tag2:")
+        node = root.content[0]
+
+        expect(node.heading).to.be.eq("Heading ")
+        expect(node.tags).to.be.eq(["tag1", "tag2"])
+
+    def test_with_date(self):
+        root = parse('''* TODO Task
+  DEADLINE: <2019-03-07 Wed> SCHEDULED: <2019-03-06 Wed>''')
+        node = root.content[0]
+
+        expect(node.scheduled.date).to.be.eq(datetime(year=2019, month=3, day=6))
+        expect(node.deadline.date).to.be.eq(datetime(year=2019, month=3, day=7))
