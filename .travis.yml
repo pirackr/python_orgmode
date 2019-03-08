@@ -7,3 +7,9 @@ install:
   - pip install -r requirements.txt
 script:
   - python -m pytest tests/
+deploy:
+  provider: pypi
+  username: pirackr
+  password:
+    secure: "PyfuIs3TrPu/QuKCW9wTqHcTOwUsjTXeBy7MQIrs20Hoq/alGch2gygFKkVo0GSfJkFqyXHR1JxrNDiiNsDUxCdUXIJqoJaMLH9/5Gi3DvD1swbpegvmKnXqlFSpEFygj5lmYT026ei+Yo221tt96Vgj5KPs1pN93zlBFpDQDqJ2+OHhCz6eME8yyFLnlOKv279cslor4uA0fkRev2XufWkt97g68M7ANzVq4zTAeQalghzBZWAJIqpkcAMPLEFNDXrqZvR3enfbvKKpMom0E5b0IwT6WSTKhmHNSTOxQWUCxPaFGpfsL+VrHbUaaeio94lIsvvsEIfldibsurf6e56xYWWtPdJ9tLEH9eFI58/lJgE+mJ3lW6cuU/kcRuN89yicht7KxzQ8yusD1mjen4RdSQBLFeB/vNl2LRyNI7B/2BmGbaOe53duHwwH0+9fx/2TTHE44cI5JVMx3Bsauxw4H26ZA9R6TnGi5I+5uuiQ3Oz2GKkrhEA/psdt7jgWnLOsa3nUoXQZ4k+nBmXCRlcwZoFCWp8nzt4aGn2yDv87W75Trmk6B0H6rzcyXLjt1iSgzcYUwUvPlJREtZ8PWyAF/Tnbs4YcIsrQ98s/9Ol5wtj6g0d71lrKCGeqG354GaB2DMGTfceibt/lL0+k+GiLW4bW8q8hGGfhK8qpnR4="
+  skip_existing: true
