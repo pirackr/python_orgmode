@@ -1,8 +1,8 @@
 version: '3.5'
 
 services:
-  python-org:
-    container_name: python-org
+  python_orgmode:
+    container_name: python_orgmode
     build: .
     volumes:
       - '.:/app'

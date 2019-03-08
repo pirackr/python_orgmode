@@ -2,7 +2,7 @@ import unittest
 
 from datetime import datetime
 from robber import expect
-from python_org import parse, OrgNode, Text
+from python_orgmode import parse, OrgNode, Text
 
 
 class HeadlinesTest(unittest.TestCase):
@@ -72,6 +72,8 @@ Node2->body1''')
         root = parse('''* TODO Task
   DEADLINE: <2019-03-07 Wed> SCHEDULED: <2019-03-06 Wed>''')
         node = root.content[0]
-
-        expect(node.scheduled.date).to.be.eq(datetime(year=2019, month=3, day=6))
-        expect(node.deadline.date).to.be.eq(datetime(year=2019, month=3, day=7))
+        expect(node.dates).to.have.length(2)
+        expect(node.dates[0].kind).to.be.eq("DEADLINE")
+        expect(node.dates[0].date).to.be.eq(datetime(year=2019, month=3, day=7))
+        expect(node.dates[1].kind).to.be.eq("SCHEDULED")
+        expect(node.dates[1].date).to.be.eq(datetime(year=2019, month=3, day=6))
