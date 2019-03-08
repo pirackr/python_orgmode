@@ -6,7 +6,7 @@ from setuptools import setup
 
 setup(
     name='python_orgmode',
-    version='1.1.2',
+    version='0.1',
     description='Org file (orgmode.org) parser',
     long_description='A small lib which parse org file',
     author='Pirackr',
