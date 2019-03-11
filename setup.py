@@ -1,12 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import datetime
 
 from setuptools import setup
 
+MAJOR_VERSION = '0.1'
+version = "{}.{}".format(MAJOR_VERSION, datetime.datetime.now().strftime("%Y%m%d%H%M"))
+
+
 setup(
     name='python_orgmode',
-    version='0.1',
+    version=version,
     description='Org file (orgmode.org) parser',
     long_description='A small lib which parse org file',
     author='Pirackr',

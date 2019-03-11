@@ -65,7 +65,7 @@ Node2->body1''')
         root = parse("* TODO Heading :tag1:tag2:")
         node = root.content[0]
 
-        expect(node.heading).to.be.eq("Heading ")
+        expect(node.heading).to.be.eq("Heading")
         expect(node.tags).to.be.eq(["tag1", "tag2"])
 
     def test_with_date(self):
@@ -77,3 +77,7 @@ Node2->body1''')
         expect(node.dates[0].date).to.be.eq(datetime(year=2019, month=3, day=7))
         expect(node.dates[1].kind).to.be.eq("SCHEDULED")
         expect(node.dates[1].date).to.be.eq(datetime(year=2019, month=3, day=6))
+
+    def test_bug_heading_with_colon(self):
+        root = parse('''* TODO hello:test''')
+        expect(root.content[0].heading).to.be.eq("hello:test")

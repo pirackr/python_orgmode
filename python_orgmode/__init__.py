@@ -1,5 +1,6 @@
 import datetime
-from pyparsing import OneOrMore, oneOf, Keyword, White, restOfLine, ParseException, Optional, SkipTo, LineEnd, Or, ZeroOrMore, Literal, Word, nums, alphas, Suppress, Group
+from pyparsing import (OneOrMore, oneOf, Keyword, White, restOfLine, ParseException, Optional, SkipTo, LineEnd, Or,
+                       ZeroOrMore, Literal, Word, nums, alphas, Suppress, Group, alphanums, printables, delimitedList)
 
 def integer(name):
     return Word(nums).setResultsName(name).setParseAction(lambda x: int(x.get(name)))
@@ -11,15 +12,18 @@ def safe(parsed, key, default=None):
 
     return default
 
-
+word = Word(printables)
+colon = Suppress(":")
 whitespace = White().suppress()
+minus = Suppress("-")
+
 kind = (Keyword("TODO") | Keyword("DONE")).setResultsName("kind") + whitespace
 level = OneOrMore("*").setParseAction(lambda x: len(x)).setResultsName("level")
-tags = (ZeroOrMore(Literal(":").suppress() + SkipTo(":")) + Literal(":").suppress()) \
-    .setResultsName("tags")
-org_node = (level + whitespace + Optional(kind) + \
-    (SkipTo(":") | SkipTo(LineEnd())).setResultsName("heading") + \
-    Optional(tags))
+tags = colon + delimitedList(Word(alphanums), delim=":").setResultsName("tags") + colon
+text = ZeroOrMore(~tags + Word(printables)). \
+    setParseAction(lambda x: " ".join(x["heading"])). \
+    setResultsName("heading")
+org_node = level + whitespace + Optional(kind) + text + Optional(tags)
 
 _datetime = integer("year") + Suppress('-') + integer('month') + Suppress('-') + integer('day') + whitespace + \
     Word(alphas).suppress()
@@ -55,7 +59,7 @@ class Collection:
     def __init__(self, collections=None):
         self.collections = collections or []
 
-        
+
 class DateTime:
     def __init__(self, kind, date):
         self.date = date
