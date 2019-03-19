@@ -25,14 +25,18 @@ text = ZeroOrMore(~tags + Word(printables)). \
     setResultsName("heading")
 org_node = level + whitespace + Optional(kind) + text + Optional(tags)
 
+start_properties = Literal(":PROPERTIES:").suppress() + restOfLine()
+a_property = colon + Word(printables, excludeChars=":").setResultsName("key") + colon + restOfLine().setResultsName("value")
+end_properties = Literal(":END:").suppress() + restOfLine()
+
 _datetime = integer("year") + Suppress('-') + integer('month') + Suppress('-') + integer('day') + whitespace + \
     Word(alphas).suppress()
 schedule = Optional((Keyword("SCHEDULED") | Keyword("DEADLINE"))).setResultsName("type")  + Literal(":").suppress() + whitespace + \
     Literal("<").suppress() + _datetime + Literal(">").suppress()
 
 text = Group(OneOrMore(Group(schedule))).setResultsName("schedules") | \
-    Group(org_node).setResultsName("org_node")
-
+    Group(org_node).setResultsName("org_node") | \
+    Group(start_properties | end_properties | a_property).setResultsName("property")
 class OrgNode:
     def __init__(self, kind, heading, level, content=None, tags=None, dates=None):
         self.kind = kind
@@ -41,6 +45,7 @@ class OrgNode:
         self.content = content or []
         self.tags = tags or []
         self.dates = dates or []
+        self.properties = {}
 
     @classmethod
     def from_parsed_results(cls, parsed):
@@ -65,10 +70,15 @@ class DateTime:
         self.date = date
         self.kind = kind
 
+class Property:
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+
+
 def parse_line(st):
     try:
         parsed = text.parseString(st)
-
         if "org_node" in parsed:
             return OrgNode.from_parsed_results(parsed["org_node"])
         elif "schedules" in parsed:
@@ -76,6 +86,9 @@ def parse_line(st):
                 [DateTime(p["type"],
                          datetime.datetime(year=p["year"], month=p["month"], day=p["day"]))
                  for p in parsed["schedules"]])
+        elif "property" in parsed:
+            if "key" in parsed['property']:
+                return Property(parsed['property']["key"], parsed['property']["value"].strip())
     except ParseException as e:
         return Text(st)
 
@@ -106,6 +119,8 @@ def parse(st):
             current = parsed
         elif isinstance(parsed, Collection):
             current.dates = parsed.collections
+        elif isinstance(parsed, Property):
+            current.properties[parsed.key] = parsed.value
         else:
             current.content.append(parsed)
 

@@ -81,3 +81,15 @@ Node2->body1''')
     def test_bug_heading_with_colon(self):
         root = parse('''* TODO hello:test''')
         expect(root.content[0].heading).to.be.eq("hello:test")
+
+    def test_parse_properties(self):
+        root = parse('''* Heading 
+:PROPERTIES:
+:CATEGORY: cat
+:END:
+''')
+        node = root.content[0]
+        print(node)
+        expect(node.heading).to.be.eq("Heading")
+        expect(node.properties).to.contain("CATEGORY")
+        expect(node.properties["CATEGORY"]).to.be.eq("cat")
